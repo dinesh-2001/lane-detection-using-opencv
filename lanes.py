@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def make_coordinates(image,line_parameters):
-    slope, intercept = line_parameters
+    slope,intercept=line_parameters
     y1=image.shape[0]
     y2=int(y1*(3/5))
     x1=int((y1-intercept)/slope)
@@ -37,8 +37,7 @@ def canny(image):
 
 def display_lines(image,lines):
     line_image=np.zeros_like(image)
-    if lines is None:
-        return
+    if lines is not None:
         for line in lines:
             x1,y1,x2,y2=line.reshape(4)
             cv2.line(line_image,(int(x1),int(y1)),(int(x2),int(y2)),(255,0,0),10)
@@ -58,7 +57,7 @@ while(cap.isOpened()):
     _,frame=cap.read()
     canny_image=canny(frame)
     cropped_image=region_of_interest(canny_image)
-    lines=cv2.HoughLinesP(cropped_image,2, np.pi/180,100, np.array([]),minLineLength=100,maxLineGap=50)
+    lines=cv2.HoughLinesP(cropped_image,2, np.pi/180,100, np.array([]),minLineLength=40,maxLineGap=5)
     averaged_lines=average_slope_intercept(frame ,lines)
     line_image=display_lines(frame,averaged_lines)
     combo_image=cv2.addWeighted(frame,0.8,line_image,1,1)
@@ -67,3 +66,4 @@ while(cap.isOpened()):
         break
 cap.release()
 cv2.destroyALLWindows()
+
